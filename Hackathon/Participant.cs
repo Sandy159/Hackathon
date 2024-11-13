@@ -7,13 +7,19 @@ namespace Hackathon
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public List<string> Wishlist { get; set; }
+        public Wishlist wishlist { get; set; }
 
-        public Participant(int id, string name, List<string> wishlist)
+        public Participant(int id, string name)
         {
             Id = id;
             Name = name;
-            Wishlist = wishlist;
+            wishlist = new Wishlist(id, Array.Empty<int>()); //пустой wishlist
+        }
+
+        public void GenerateWishlist(List<int> ids, Random random)
+        {
+            var randomizedIds = ids.OrderBy(x => random.Next()).ToArray(); // Перемешиваем и преобразуем в массив
+            wishlist = new Wishlist(Id, randomizedIds); 
         }
     }
 }

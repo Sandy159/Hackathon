@@ -1,33 +1,35 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Hackathon;
 
-namespace Hackathon
+class Program
 {
-    class Program
+    public static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            string juniorsFile = "Data/Juniors20.csv"; 
-            string teamLeadsFile = "Data/Teamleads20.csv"; 
-
-            HRManager hrManager = new HRManager(juniorsFile, teamLeadsFile);
-
-            if (!hrManager.Juniors.Any())
+        var host = Host.CreateDefaultBuilder(args)
+            .ConfigureServices((hostContext, services) =>
             {
-                Console.WriteLine("Нет доступных джунов для хакатона.");
-                return; 
-            }
-            if (!hrManager.TeamLeads.Any())
-            {
-                Console.WriteLine("Нет доступных тимлидов для хакатона.");
-                return; 
-            }
+                var dataLoader = new DataLoader();
+                var constants = new Constants();
 
-            double averageHarmonicity = hrManager.ConductMultipleHackathons(1000);
+                services.AddSingleton<DataLoader>(); 
+                services.AddSingleton<Constants>(); 
 
-            Console.WriteLine($"Средняя гармоничность по 1000 хакатонам: {averageHarmonicity:F2}");
-        }
+                services.AddTransient<HRManager>();
+                services.AddTransient<HRDirector>();
+                services.AddTransient<ITeamBuildingStrategy, SimpleTeamBuildingStrategy>(); 
+
+                services.AddSingleton<List<Junior>>(provider =>
+                    dataLoader.LoadEmployees(constants.JuniorsFilePath, (id, name) => new Junior(id, name)));
+
+                services.AddSingleton<List<TeamLead>>(provider =>
+                    dataLoader.LoadEmployees(constants.TeamLeadsFilePath, (id, name) => new TeamLead(id, name)));
+
+                services.AddSingleton<Compition>();
+                services.AddSingleton<CompitionWorker>(); 
+
+                services.AddHostedService<CompitionWorker>();
+            }).Build();
+            host.Run();
     }
 }
