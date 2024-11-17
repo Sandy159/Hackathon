@@ -11,8 +11,8 @@ namespace Hackathon
 
             foreach (var (junior, teamLead) in pairs)
             {
-                int juniorHappiness = 20 - Array.IndexOf(junior.wishlist.DesiredEmployees, teamLead.Id);
-                int teamLeadHappiness = 20 - Array.IndexOf(teamLead.wishlist.DesiredEmployees, junior.Id);
+                int juniorHappiness = pairs.Count - Array.IndexOf(junior.wishlist.DesiredEmployees, teamLead.Id);
+                int teamLeadHappiness = pairs.Count - Array.IndexOf(teamLead.wishlist.DesiredEmployees, junior.Id);
 
                 if (juniorHappiness <= 0 || teamLeadHappiness <= 0) continue;
 
