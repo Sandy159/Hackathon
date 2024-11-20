@@ -19,26 +19,19 @@ namespace Hackathon
             this.teamLeads = teamLeads;
         }
 
+        public double RunHackathon(List<(Junior, TeamLead)> pairs, List<Wishlist> juniorsWishlists, List<Wishlist> teamleadsWishlists)
+        {
+            return hrDirector.CountHackathon(pairs, juniorsWishlists, teamleadsWishlists);
+        }
+
         public double Run()
         {
-            var allTeamLeadIds = teamLeads.Select(t => t.Id).ToList();
-            var allJuniorIds = juniors.Select(j => j.Id).ToList();
-            var random = new Random();
+            var juniorsWishlists = WishlistGenerator.GenerateWishlist(juniors, teamLeads);
+            var teamleadsWishlists = WishlistGenerator.GenerateWishlist(teamLeads, juniors);
 
-            foreach (var junior in juniors)
-            {
-                junior.GenerateWishlist(allTeamLeadIds, random);
-            }
-
-            foreach (var teamLead in teamLeads)
-            {
-                teamLead.GenerateWishlist(allJuniorIds, random);
-            }
-
-            hrManager.SetParticipants(juniors, teamLeads);
-            var pairs = hrManager.BuildPairs();
+            var pairs = hrManager.BuildPairs(juniors, teamLeads, juniorsWishlists, teamleadsWishlists);
             
-            return hrDirector.CountHackathon(pairs);
+            return RunHackathon(pairs, juniorsWishlists, teamleadsWishlists);
         }
     }
 }

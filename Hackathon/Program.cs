@@ -20,7 +20,6 @@ class Program
             {
                 services.Configure<ConstantOptions>(hostContext.Configuration.GetSection("Constants"));
 
-                services.AddSingleton<DataLoader>(); 
                 services.AddTransient<HRManager>();
                 services.AddTransient<HRDirector>();
                 services.AddTransient<ITeamBuildingStrategy, SimpleTeamBuildingStrategy>(); 

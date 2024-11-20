@@ -11,14 +11,12 @@ namespace Hackathon
     {
         private readonly Compition _hackathon;
         private readonly IOptions<ConstantOptions> _constants;
-        private readonly DataLoader _dataLoader;
         private readonly IHostApplicationLifetime _host;
 
-        public CompitionWorker(Compition hackathon, IOptions<ConstantOptions> constants, DataLoader dataLoader, IHostApplicationLifetime host)
+        public CompitionWorker(Compition hackathon, IOptions<ConstantOptions> constants, IHostApplicationLifetime host)
         {
             _hackathon = hackathon;
             _constants = constants;
-            _dataLoader = dataLoader;
             _host = host;
         }
 
@@ -26,8 +24,8 @@ namespace Hackathon
         {
             var constants = _constants.Value;
 
-            var juniors = _dataLoader.LoadEmployees(constants.JuniorsFilePath, (id, name) => new Junior(id, name));
-            var teamLeads = _dataLoader.LoadEmployees(constants.TeamLeadsFilePath, (id, name) => new TeamLead(id, name));
+            var juniors = DataLoader.LoadEmployees(constants.JuniorsFilePath, (id, name) => new Junior(id, name));
+            var teamLeads = DataLoader.LoadEmployees(constants.TeamLeadsFilePath, (id, name) => new TeamLead(id, name));
 
             _hackathon.SetParticipants(juniors, teamLeads);
 
