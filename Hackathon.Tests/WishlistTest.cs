@@ -9,10 +9,23 @@ public class WishlistTests
     public void Wishlist_ShouldHaveCorrectSize()
     {
         // Arrange
-        string juniorsFile = "Juniors20.csv";
-        string teamLeadsFile = "Teamleads20.csv";
-        var juniors = DataLoader.LoadEmployees(juniorsFile, (id, name) => new Junior(id, name));
-        var teamLeads = DataLoader.LoadEmployees(teamLeadsFile, (id, name) => new TeamLead(id, name));
+        var juniors = new List<Junior>
+        {
+            new Junior(1, "Junior1"),
+            new Junior(2, "Junior2"),
+            new Junior(3, "Junior3"),
+            new Junior(4, "Junior4"),
+            new Junior(5, "Junior5")
+        };
+
+        var teamLeads = new List<TeamLead>
+        {
+            new TeamLead(1, "TeamLead1"),
+            new TeamLead(2, "TeamLead2"),
+            new TeamLead(3, "TeamLead3"),
+            new TeamLead(4, "TeamLead4"),
+            new TeamLead(5, "TeamLead5")
+        };
 
         // Act
         var juniorsWishlists = WishlistGenerator.GenerateWishlist(juniors, teamLeads);
@@ -27,10 +40,23 @@ public class WishlistTests
     public void Wishlist_ShouldContainSpecificEmployee()
     {
         // Arrange
-        string juniorsFile = "Juniors20.csv";
-        string teamLeadsFile = "Teamleads20.csv";
-        var juniors = DataLoader.LoadEmployees(juniorsFile, (id, name) => new Junior(id, name));
-        var teamLeads = DataLoader.LoadEmployees(teamLeadsFile, (id, name) => new TeamLead(id, name));
+        var juniors = new List<Junior>
+        {
+            new Junior(1, "Junior1"),
+            new Junior(2, "Junior2"),
+            new Junior(3, "Junior3"),
+            new Junior(4, "Junior4"),
+            new Junior(5, "Junior5")
+        };
+
+        var teamLeads = new List<TeamLead>
+        {
+            new TeamLead(1, "TeamLead1"),
+            new TeamLead(2, "TeamLead2"),
+            new TeamLead(3, "TeamLead3"),
+            new TeamLead(4, "TeamLead4"),
+            new TeamLead(5, "TeamLead5")
+        };
 
         // Act
         var juniorsWishlists = WishlistGenerator.GenerateWishlist(juniors, teamLeads);

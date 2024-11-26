@@ -1,0 +1,73 @@
+# Общие исключения для операционных систем
+*.DS_Store
+Thumbs.db
+
+# Файлы для IDE и редакторов
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Сборка .NET
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.lib
+*.ndb
+*.ndk
+*.map
+*.log
+*.vspx
+*.sln.ide
+*.nupkg
+*.snk
+*.docstates
+
+# Пакеты
+*.nupkg
+*.nuspec
+packages/
+
+# Компоненты
+.project
+.project.user
+rebuild.log
+.env
+
+# Лог-файлы
+*.log
+
+# Кеши NuGet
+*.nuget/
+.nuget/
+
+# Файлы блокировки
+project.lock.json
+project.fragment.lock.json
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Прочие временные файлы
+*.tmp
+*.bak
+*.swp
+*.sublime-workspace
+*.sublime-project
+
+# Секреты и настройки
+*.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+

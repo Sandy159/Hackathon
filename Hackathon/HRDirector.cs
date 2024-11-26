@@ -45,6 +45,10 @@ namespace Hackathon
             {
                 int juniorHappiness = happiness[0];
                 int teamLeadHappiness = happiness[1];
+                if (juniorHappiness == 0 && teamLeadHappiness == 0)
+                {
+                    throw new ArgumentException("All indexes are zero. Harmonic mean is undefined");
+                }
 
                 double harmonicMean = 2.0 * juniorHappiness * teamLeadHappiness / (juniorHappiness + teamLeadHappiness);
                 totalHappiness += harmonicMean;

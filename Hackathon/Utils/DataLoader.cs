@@ -11,14 +11,15 @@ namespace Hackathon
         {
             if (!File.Exists(filePath))
             {
-                Console.WriteLine($"Файл не найден: {filePath}");
                 return new List<T>();
             }
 
             return File.ReadAllLines(filePath)
                        .Skip(1) // Пропускаем заголовок
                        .Select(line => line.Split(';'))
-                       .Where(parts => parts.Length == 2 && !string.IsNullOrWhiteSpace(parts[1]))
+                       .Where(parts => parts.Length == 2 && 
+                                        int.TryParse(parts[0], out _) &&
+                                        !string.IsNullOrWhiteSpace(parts[1]))
                        .Select(parts =>
                        {
                            int id = int.Parse(parts[0]);
