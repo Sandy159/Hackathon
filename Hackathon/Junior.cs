@@ -1,10 +1,7 @@
 using System.Collections.Generic;
+using Nsu.HackathonProblem.Contracts;
 
 namespace Hackathon
 {
-    // Класс для джунов
-    public class Junior : Participant
-    {
-        public Junior(int id, string name) : base(id, name) { }
-    }
+    public record Junior(int id, string name) : Employee(id, name);
 }

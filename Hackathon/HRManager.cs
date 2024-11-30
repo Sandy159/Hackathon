@@ -1,22 +1,28 @@
+using System;
 using System.Collections.Generic;
+using Nsu.HackathonProblem.Contracts;
 
 namespace Hackathon
 {
     public class HRManager
     {
-        private ITeamBuildingStrategy _teamBuildingStrategy;
+        private readonly ITeamBuildingStrategy _teamBuildingStrategy;
 
         public HRManager(ITeamBuildingStrategy teamBuildingStrategy)
         {
             _teamBuildingStrategy = teamBuildingStrategy;
         }
-        
-        public List<(Junior, TeamLead)> BuildPairs(List<Junior> juniors, List<TeamLead> teamLeads, List<Wishlist> juniorsWishlists, List<Wishlist> teamleadsWishlists)
-        {
-            if (teamLeads.Count != juniors.Count)
-                throw new ArgumentException("The number of teamleads and juniors should be the same");
 
-            return _teamBuildingStrategy.BuildPairs(juniors, teamLeads, juniorsWishlists, teamleadsWishlists);
+        public IEnumerable<Team> BuildTeams(
+            IEnumerable<Employee> juniors, 
+            IEnumerable<Employee> teamLeads, 
+            IEnumerable<Wishlist> juniorsWishlists, 
+            IEnumerable<Wishlist> teamLeadsWishlists)
+        {
+            if (juniors.Count() != teamLeads.Count())
+                throw new ArgumentException("The number of team leads and juniors should be the same.");
+
+            return _teamBuildingStrategy.BuildTeams(teamLeads, juniors, teamLeadsWishlists, juniorsWishlists);
         }
     }
 }

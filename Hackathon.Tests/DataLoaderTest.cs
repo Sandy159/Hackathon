@@ -21,7 +21,7 @@ namespace Hackathon.Tests
             });
 
             // Act
-            var result = DataLoader.LoadEmployees(testFilePath, (id, name) => new Junior(id, name));
+            var result = DataLoader.LoadEmployees(testFilePath);
 
             // Assert
             Assert.NotNull(result);
@@ -42,7 +42,7 @@ namespace Hackathon.Tests
             string nonExistentFile = "nonexistent.csv";
 
             // Act
-            var result = DataLoader.LoadEmployees(nonExistentFile, (id, name) => new Junior(id, name));
+            var result = DataLoader.LoadEmployees(nonExistentFile);
 
             // Assert
             Assert.NotNull(result);
@@ -65,7 +65,7 @@ namespace Hackathon.Tests
             });
 
             // Act
-            var result = DataLoader.LoadEmployees(testFilePath, (id, name) => new Junior(id, name));
+            var result = DataLoader.LoadEmployees(testFilePath);
 
             // Assert
             Assert.NotNull(result);
@@ -89,7 +89,7 @@ namespace Hackathon.Tests
             File.WriteAllText(testFilePath, "Id;Name\n");
 
             // Act
-            var result = DataLoader.LoadEmployees(testFilePath, (id, name) => new Junior(id, name));
+            var result = DataLoader.LoadEmployees(testFilePath);
 
             // Assert
             Assert.NotNull(result);

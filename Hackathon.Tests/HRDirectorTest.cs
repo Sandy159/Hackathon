@@ -1,5 +1,6 @@
 using Xunit;
 using Hackathon;
+using Nsu.HackathonProblem.Contracts;
 
 namespace Hackathon.Tests;
 
@@ -79,14 +80,14 @@ public class HRDirectorTests
             new Wishlist(3, new int[] { 4, 2, 5, 1, 3 }),
             new Wishlist(4, new int[] { 2, 3, 1, 5, 4 }),
             new Wishlist(5, new int[] { 4, 1, 2, 5, 3 })
-        };
-        var teams = new List<(Junior, TeamLead)>
+        };  
+        var teams = new List<Team>
         {
-            (new Junior(2, "Junior2"), new TeamLead(1, "TeamLead1")),
-            (new Junior(4, "Junior4"), new TeamLead(2, "TeamLead2")),
-            (new Junior(3, "Junior3"), new TeamLead(4, "TeamLead4")),
-            (new Junior(1, "Junior1"), new TeamLead(3, "TeamLead3")),
-            (new Junior(5, "Junior5"), new TeamLead(5, "TeamLead5"))
+            new Team(new Employee(1, "TeamLead1"), new Employee(2, "Junior2")),
+            new Team(new Employee(2, "TeamLead2"), new Employee(4, "Junior4")),
+            new Team(new Employee(4, "TeamLead4"), new Employee(3, "Junior3")),
+            new Team(new Employee(3, "TeamLead3"), new Employee(1, "Junior1")),
+            new Team(new Employee(5, "TeamLead5"), new Employee(5, "Junior5"))
         };
         var hrDirector = new HRDirector();
 

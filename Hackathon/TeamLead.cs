@@ -1,10 +1,7 @@
 using System.Collections.Generic;
+using Nsu.HackathonProblem.Contracts;
 
 namespace Hackathon
 {
-    // Класс для тимлидов
-    public class TeamLead : Participant
-    {
-        public TeamLead(int id, string name) : base(id, name) { }
-    }
+    public record TeamLead(int id, string name) : Employee(id, name);
 }

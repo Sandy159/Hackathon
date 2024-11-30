@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Nsu.HackathonProblem.Contracts;
 
 namespace Hackathon
 {
     public static class WishlistGenerator
     {
         public static List<Wishlist> GenerateWishlist(
-            IEnumerable<Participant> forEmployees,
-            IEnumerable<Participant> offEmployees)
+            IEnumerable<Employee> forEmployees,
+            IEnumerable<Employee> offEmployees)
         {
             if (forEmployees == null || offEmployees == null)
             {

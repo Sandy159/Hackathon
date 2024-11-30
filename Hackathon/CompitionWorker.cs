@@ -25,8 +25,8 @@ namespace Hackathon
         {
             var constants = _constants.Value;
 
-            var juniors = DataLoader.LoadEmployees(constants.JuniorsFilePath, (id, name) => new Junior(id, name));
-            var teamLeads = DataLoader.LoadEmployees(constants.TeamLeadsFilePath, (id, name) => new TeamLead(id, name));
+            var juniors = DataLoader.LoadEmployees(constants.JuniorsFilePath);
+            var teamLeads = DataLoader.LoadEmployees(constants.TeamLeadsFilePath);
 
             _hackathon.SetParticipants(juniors, teamLeads);
 

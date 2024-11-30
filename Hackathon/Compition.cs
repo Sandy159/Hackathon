@@ -1,37 +1,40 @@
+using System.Collections.Generic;
+using Nsu.HackathonProblem.Contracts;
+
 namespace Hackathon
 {
     public class Compition
     {
-        private List<Junior> juniors = new();
-        private List<TeamLead> teamLeads = new();
-        private HRManager hrManager;
-        private HRDirector hrDirector;
+        private List<Employee> juniors = new();
+        private List<Employee> teamLeads = new();
+        private readonly HRManager _hrManager;
+        private readonly HRDirector _hrDirector;
 
         public Compition(HRManager hrManager, HRDirector hrDirector)
         {
-            this.hrManager = hrManager;
-            this.hrDirector = hrDirector;
+            _hrManager = hrManager;
+            _hrDirector = hrDirector;
         }
 
-        public void SetParticipants(List<Junior> juniors, List<TeamLead> teamLeads)
+        public void SetParticipants(List<Employee> juniors, List<Employee> teamLeads)
         {
             this.juniors = juniors;
             this.teamLeads = teamLeads;
         }
 
-        public double RunHackathon(List<(Junior, TeamLead)> pairs, List<Wishlist> juniorsWishlists, List<Wishlist> teamleadsWishlists)
+        public double RunHackathon(IEnumerable<Team> teams, IEnumerable<Wishlist> juniorsWishlists, IEnumerable<Wishlist> teamLeadsWishlists)
         {
-            return hrDirector.CountHackathon(pairs, juniorsWishlists, teamleadsWishlists);
+            return _hrDirector.CountHackathon(teams, juniorsWishlists, teamLeadsWishlists);
         }
 
         public double Run()
         {
             var juniorsWishlists = WishlistGenerator.GenerateWishlist(juniors, teamLeads);
-            var teamleadsWishlists = WishlistGenerator.GenerateWishlist(teamLeads, juniors);
+            var teamLeadsWishlists = WishlistGenerator.GenerateWishlist(teamLeads, juniors);
 
-            var pairs = hrManager.BuildPairs(juniors, teamLeads, juniorsWishlists, teamleadsWishlists);
-            
-            return RunHackathon(pairs, juniorsWishlists, teamleadsWishlists);
+            var teams = _hrManager.BuildTeams(juniors, teamLeads, juniorsWishlists, teamLeadsWishlists);
+
+            return RunHackathon(teams, juniorsWishlists, teamLeadsWishlists);
         }
     }
 }
