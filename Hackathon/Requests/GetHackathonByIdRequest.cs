@@ -1,4 +1,8 @@
 using Hackathon;
 using MediatR;
 
-public record GetHackathonByIdRequest(int Id) : IRequest<Compition>;
+public class GetHackathonByIdRequest : IRequest<Compition?>
+{
+    public int Id { get; }
+    public GetHackathonByIdRequest(int id) => Id = id;
+}

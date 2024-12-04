@@ -1,3 +1,2 @@
 using MediatR;
-
-public record GetAverageScoreRequest : IRequest<double>;
+public class GetAverageScoreRequest : IRequest<double> { }

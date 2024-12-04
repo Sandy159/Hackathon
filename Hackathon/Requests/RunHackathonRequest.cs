@@ -1,3 +1,3 @@
 using MediatR;
 
-public record RunHackathonRequest : IRequest<double>;
+public class RunHackathonRequest : IRequest<double> { }

@@ -27,14 +27,14 @@ class Program
                 services.AddTransient<ITeamBuildingStrategy, SimpleTeamBuildingStrategy>(); 
                 services.AddTransient<Compition>();
 
-                //services.AddSingleton<CompitionMenu>();
+                services.AddSingleton<CompitionMenu>();
 
-                //services.AddDbContext<HackathonContext>(options => options.UseNpgsql("Host=localhost;Port=5432;Database=hackathon;Username=postgres;Password=postgres"));
+                services.AddDbContext<HackathonContext>(options => options.UseNpgsql("Host=localhost;Port=5432;Database=hackathon;Username=postgres;Password=postgres"));
 
-                /*services.AddMediatR(cfg => 
+                services.AddMediatR(cfg => 
                             {
                                 cfg.RegisterServicesFromAssemblyContaining<Program>();
-                            }).BuildServiceProvider();*/
+                            }).BuildServiceProvider();
 
                 services.AddHostedService<CompitionWorker>();
             }).Build();
