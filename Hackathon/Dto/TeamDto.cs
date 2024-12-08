@@ -5,8 +5,8 @@ namespace Hackathon
     public class TeamDto
     {
         public int TeamPk { get; set; }
-        public required EmployeeDto Junior { get; set; }
-        public required EmployeeDto TeamLead { get; set; }
-        public required CompitionDto Hackathon { get; set; }
+        public EmployeeDto Junior { get; set; }
+        public EmployeeDto TeamLead { get; set; }
+        public CompitionDto Hackathon { get; set; }
     }
 }

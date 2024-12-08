@@ -46,9 +46,10 @@ namespace Hackathon
                             if (hackathon != null)
                             {
                                 Console.WriteLine("----------------------------------");
-                                Console.WriteLine($"Hackathon: {hackathon.Id}, score: {hackathon.Score}");
 
                                 var employees = await _context.Employees.ToListAsync();
+
+                                Console.WriteLine($"Hackathon: {hackathon.Id}, score: {hackathon.Score}");
 
                                 Console.WriteLine("Participants:");
                                 foreach (var wishlist in hackathon.Wishlists)

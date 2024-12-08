@@ -6,7 +6,7 @@ namespace Hackathon
     {
         public int EmployeePk { get; set; }
         public int Id { get; set; }
-        public required string Name { get; set; }
-        public required string Role { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
     }
 }

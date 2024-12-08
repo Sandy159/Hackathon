@@ -6,7 +6,7 @@ namespace Hackathon
     {
         public int Id { get; set; }
         public double Score { get; set; }
-        public required List<WishlistDto> Wishlists { get; set; }
-        public required List<TeamDto> Teams { get; set; }
+        public List<WishlistDto> Wishlists { get; set; }
+        public List<TeamDto> Teams { get; set; }
     }
 }

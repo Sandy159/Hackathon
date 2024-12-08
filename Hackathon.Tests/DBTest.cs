@@ -1,100 +1,153 @@
-using Hackathon;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using Testcontainers.PostgreSql;
+using Xunit;
+using Hackathon;
 using Nsu.HackathonProblem.Contracts;
+using System.Linq;
 
-namespace Hackathon.Tests;
-public class HackathonTests : IClassFixture<TestFixture>, IDisposable
+namespace Hackathon.Tests
 {
-    private readonly HackathonContext _context;
-
-    public HackathonTests(TestFixture fixture)
+    public class DatabaseTest : IAsyncLifetime
     {
-        _context = fixture.Context;
-    }
+        private PostgreSqlContainer _postgresContainer;
+        private DbContextOptions<HackathonContext> _dbContextOptions;
 
-    public void Cleanup()
-    {
-        _context.Hackathons.RemoveRange(_context.Hackathons);
-        _context.SaveChanges();
-    }
+        private HackathonContext CreateNewContext() => new HackathonContext(_dbContextOptions);
 
-
-    public void Dispose()
-    {
-        Cleanup();
-    }
-
-    [Fact]
-    public async Task Should_Save_Hackathon_To_Database()
-    {
-        // Arrange
-        var hackathon = new Compition
+        public DatabaseTest()
         {
-            Score = 85.0,
-            Wishlists = new List<Wishlist>(),
-            Teams = new List<Team>()
-        };
+            _postgresContainer = new PostgreSqlBuilder()
+                .WithImage("postgres:latest")
+                .WithDatabase("testdb")
+                .WithUsername("testuser")
+                .WithPassword("testpassword")
+                .Build();
+        }
 
-        var hackathonDto = CompitionMapper.ToEntity(hackathon, new List<Employee>());
-
-        // Act
-        _context.Hackathons.Add(hackathonDto);
-        await _context.SaveChangesAsync();
-
-        // Assert
-        var savedHackathon = await _context.Hackathons.FirstOrDefaultAsync();
-        Assert.NotNull(savedHackathon);
-        Assert.Equal(85.0, savedHackathon.Score);
-    }
-
-    [Fact]
-    public async Task Should_Read_Hackathon_From_Database()
-    {
-        // Arrange
-        var hackathonDto = new CompitionDto
+        public async Task InitializeAsync()
         {
-            Score = 92.5,
-            Wishlists = new List<WishlistDto>(),
-            Teams = new List<TeamDto>()
-        };
-        _context.Hackathons.Add(hackathonDto);
-        await _context.SaveChangesAsync();
+            Console.WriteLine("Starting PostgreSqlContainer...");
+            await _postgresContainer.StartAsync();
+            Console.WriteLine("PostgreSqlContainer started.");
 
-        // Act
-        var savedHackathon = await _context.Hackathons.FirstOrDefaultAsync();
+            _dbContextOptions = new DbContextOptionsBuilder<HackathonContext>()
+                .UseNpgsql(_postgresContainer.GetConnectionString())
+                .Options;
 
-        // Assert
-        Assert.NotNull(savedHackathon);
-        Assert.Equal(92.5, savedHackathon.Score);
-    }
+            using var context = CreateNewContext();
+            Console.WriteLine("Ensuring database is created...");
+            await context.Database.EnsureCreatedAsync();
+            Console.WriteLine("Database is ready.");
+        }
 
-    [Fact]
-    public async Task Should_Calculate_Average_Harmonic_And_Save()
-    {
-        // Arrange
-        var hackathon1 = new CompitionDto { Score = 10, 
-                                Wishlists = new List<WishlistDto>(),
-                                Teams = new List<TeamDto>()};
-        var hackathon2 = new CompitionDto { Score = 20, 
-                                Wishlists = new List<WishlistDto>(),
-                                Teams = new List<TeamDto>()};
-        var hackathon3 = new CompitionDto { Score = 30, 
-                                Wishlists = new List<WishlistDto>(),
-                                Teams = new List<TeamDto>()};
-        _context.Hackathons.AddRange(hackathon1, hackathon2, hackathon3);
-        await _context.SaveChangesAsync();
+        public async Task DisposeAsync()
+        {
+            await _postgresContainer.DisposeAsync();
+        }
 
-        // Act
-        var scores = await _context.Hackathons.Select(h => h.Score).ToListAsync();
-        var harmonicMean = HarmonicMean(scores);
+        [Fact]
+        public async Task Test_SaveHackathonToDatabase()
+        {
+            // Arrange
+            var hackathon = new CompitionDto
+            {
+                Id = 1,
+                Score = 95.0
+            };
 
-        // Assert
-        Assert.Equal(0.06, harmonicMean, 2);
-    }
+            using (var context = CreateNewContext())
+            {
+                context.Hackathons.Add(hackathon);
+                await context.SaveChangesAsync();
+            }
 
-    private double HarmonicMean(List<double> scores)
-    {
-        double sumOfInverses = scores.Sum(s => 1 / s);
-        return sumOfInverses/scores.Count;
+            // Act
+            using (var verifyContext = CreateNewContext())
+            {
+                var handler = new GetHackathonByIdHandler(verifyContext);
+                var result = await handler.Handle(new GetHackathonByIdRequest(1), CancellationToken.None);
+
+                // Assert
+                Assert.NotNull(result);
+                Assert.Equal(95.0, result?.Score);
+            }
+        }
+
+        [Fact]
+        public async Task Test_ReadHackathonFromDatabase()
+        {
+            // Arrange
+            var hackathon = new CompitionDto
+            {
+                Id = 2,
+                Score = 88.0,
+                Teams = new List<TeamDto>
+                {
+                    new TeamDto
+                    {
+                        TeamLead = new EmployeeDto{Id = 1, Name = "TeamLead1", Role = "TeamLead"}, 
+                        Junior = new EmployeeDto{Id = 2, Name = "Junior2", Role = "Junior"} 
+                    },
+                    new TeamDto
+                    {
+                        TeamLead = new EmployeeDto{Id = 2, Name = "TeamLead2", Role = "TeamLead"}, 
+                        Junior = new EmployeeDto{Id = 1, Name = "Junior1", Role = "Junior"} 
+                    }
+                }
+            };
+            
+            using (var context = CreateNewContext())
+            {
+                context.Hackathons.Add(hackathon);
+                await context.SaveChangesAsync();
+            }
+
+            // Act
+            using (var verifyContext = CreateNewContext())
+            {
+                var handler = new GetHackathonByIdHandler(verifyContext);
+                var result = await handler.Handle(new GetHackathonByIdRequest(2), CancellationToken.None);
+
+                // Assert
+                Assert.NotNull(result); 
+                Assert.Equal(88.0, result?.Score);  
+                Assert.Equal(2, result?.Id); 
+
+                Assert.NotNull(result?.Teams);  
+                Assert.Equal(2, result?.Teams.Count());  
+
+                var firstTeam = result?.Teams.FirstOrDefault();
+                Assert.NotNull(firstTeam);
+                Assert.Equal(1, firstTeam?.TeamLead?.Id);  
+                Assert.Equal(2, firstTeam?.Junior?.Id);  
+
+                var secondTeam = result?.Teams.Skip(1).FirstOrDefault();
+                Assert.NotNull(secondTeam);
+                Assert.Equal(2, secondTeam?.TeamLead?.Id); 
+                Assert.Equal(1, secondTeam?.Junior?.Id);
+            }
+        }
+
+        [Fact]
+        public async Task Test_CalculateHarmonicMean()
+        {
+            // Arrange
+            using var context = CreateNewContext();
+            context.Hackathons.AddRange(
+                new CompitionDto { Id = 1, Score = 80.0 },
+                new CompitionDto { Id = 2, Score = 100.0 }
+            );
+            await context.SaveChangesAsync();
+
+            using var verifyContext = CreateNewContext();
+            var handler = new GetAverageScoreHandler(verifyContext);
+
+            // Act
+            var averageScore = await handler.Handle(new GetAverageScoreRequest(), default);
+
+            // Assert
+            Assert.Equal(90.0, averageScore); // Проверяем правильность расчета среднего
+        }
     }
 }
