@@ -1,0 +1,149 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hackathon
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hackathon || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  hrmanager:
+    build:
+      context: .
+      dockerfile: HRManagerApp/Dockerfile
+    environment:
+      - ROLE=HRManager
+      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=hackathon;Username=postgres;Password=postgres
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5011:8080"
+    networks:
+      - hackathon_net
+
+  hrdirector:
+    build:
+      context: .
+      dockerfile: HRDirectorApp/Dockerfile
+    environment:
+      - ROLE=HRDirector
+      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=hackathon;Username=postgres;Password=postgres
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5012:8080"
+    networks:
+      - hackathon_net
+
+  x-employee-base: &employee-base
+    build:
+      context: .
+      dockerfile: EmployeeApp/Dockerfile
+    environment:
+      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=hackathon;Username=postgres;Password=postgres
+    depends_on:
+      db:
+        condition: service_healthy
+      hrmanager:
+        condition: service_started
+    networks:
+      - hackathon_net
+
+  teamlead-1:
+    <<: *employee-base
+    environment:
+      - ROLE=TeamLead
+      - EMPLOYEE_ID=1
+    ports:
+      - "5101:8080"
+
+  teamlead-2:
+    <<: *employee-base
+    environment:
+      - ROLE=TeamLead
+      - EMPLOYEE_ID=2
+    ports:
+      - "5102:8080"
+
+  teamlead-3:
+    <<: *employee-base
+    environment:
+      - ROLE=TeamLead
+      - EMPLOYEE_ID=3
+    ports:
+      - "5103:8080"
+
+  teamlead-4:
+    <<: *employee-base
+    environment:
+      - ROLE=TeamLead
+      - EMPLOYEE_ID=4
+    ports:
+      - "5104:8080"
+
+  teamlead-5:
+    <<: *employee-base
+    environment:
+      - ROLE=TeamLead
+      - EMPLOYEE_ID=5
+    ports:
+      - "5105:8080"
+
+  junior-1:
+    <<: *employee-base
+    environment:
+      - ROLE=Junior
+      - EMPLOYEE_ID=1
+    ports:
+      - "5201:8080"
+
+  junior-2:
+    <<: *employee-base
+    environment:
+      - ROLE=Junior
+      - EMPLOYEE_ID=2
+    ports:
+      - "5202:8080"
+
+  junior-3:
+    <<: *employee-base
+    environment:
+      - ROLE=Junior
+      - EMPLOYEE_ID=3
+    ports:
+      - "5203:8080"
+
+  junior-4:
+    <<: *employee-base
+    environment:
+      - ROLE=Junior
+      - EMPLOYEE_ID=4
+    ports:
+      - "5204:8080"
+
+  junior-5:
+    <<: *employee-base
+    environment:
+      - ROLE=Junior
+      - EMPLOYEE_ID=5
+    ports:
+      - "5205:8080"
+
+networks:
+  hackathon_net:
+    driver: bridge
+
+volumes:
+  db_data:
