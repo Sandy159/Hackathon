@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using CommonLibrary.Dto;
+using CommonLibrary.Contracts;
 using Refit;
 
 namespace HRManagerApp.RefitClients
@@ -7,6 +7,6 @@ namespace HRManagerApp.RefitClients
     public interface IHRDirectorApi
     {
         [Post("/api/hrdirector/calculate-harmony")]
-        Task SendFinalDistributionAsync([Body] TeamDistributionDto preferencesEntity);
+        Task EvaluateHarmonyAsync([Body] PreferencesAndTeamsResponse preferencesAndTeamsResponse);
     }
 }

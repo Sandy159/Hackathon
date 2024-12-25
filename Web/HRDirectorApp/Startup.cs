@@ -5,10 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using CommonLibrary.DataTransfer;
-using HRDirector.Service;
+using HRDirectorApp.Service;
+using HRDirectorApp.Database;
 
-namespace HRdirector
+namespace HRdirectorApp
 {
     public class Startup
     {
@@ -21,17 +21,16 @@ namespace HRdirector
 
         public void ConfigureServices(IServiceCollection services)
         {
+            
             // Настройка контекста базы данных
-            services.AddDbContext<HackathonContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<HRDirectorDbContext>(options =>
+              //  options.UseNpgsql("Host=hrdirector-db;Database=director_db;Username=postgres;Password=postgres"));
+            services.AddScoped<HRDirectorService>();
 
             // Добавление зависимостей и сервисов
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-
-            // Регистрация HRDirectorService
-            services.AddScoped<HRDirectorService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

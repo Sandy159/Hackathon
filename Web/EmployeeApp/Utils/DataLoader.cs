@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using CommonLibrary.Contracts;
 
-namespace CommonLibrary.Utils
+namespace EmployeeApp.Utils
 {
     public static class DataLoader
     {
@@ -30,7 +30,7 @@ namespace CommonLibrary.Utils
                        {
                            int id = int.Parse(parts[0]);
                            string name = parts[1];
-                           return new Employee(id, name);
+                           return new Employee{Id = id, Name = name};
                        })
                        .ToList();
         }

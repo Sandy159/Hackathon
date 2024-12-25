@@ -25,8 +25,10 @@ WORKDIR "/src/HRManagerApp"
 RUN dotnet build "HRManagerApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Публикуем проект
+WORKDIR /src
 FROM build AS publish
-RUN dotnet publish "HRManagerApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false -v detailed
+RUN dotnet publish "/src/HRManagerApp/HRManagerApp.csproj" -c Release -o /app/publish --no-build --verbosity detailed
+
 
 # Финальный образ для работы
 FROM base AS final

@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
+using CommonLibrary.Contracts;
 
-namespace CommonLibrary.Contracts
+namespace HRManagerApp.Strategy
 {
     public class SimpleTeamBuildingStrategy : ITeamBuildingStrategy
     {
         public IEnumerable<Team> BuildTeams(
             IEnumerable<Employee> teamLeads,
             IEnumerable<Employee> juniors,
-            IEnumerable<Wishlist> teamLeadsWishlists,
-            IEnumerable<Wishlist> juniorsWishlists)
+            IEnumerable<PreferencesMessage> teamLeadsWishlists,
+            IEnumerable<PreferencesMessage> juniorsWishlists)
         {
             var pairs = new List<Team>();
             var usedJuniors = new HashSet<int>();
@@ -51,7 +52,7 @@ namespace CommonLibrary.Contracts
             {
                 if (!usedJuniors.Contains(pair.junior.Id) && !usedTeamLeads.Contains(pair.teamLead.Id))
                 {
-                    pairs.Add(new Team(pair.teamLead, pair.junior));
+                    pairs.Add(new Team(pair.teamLead.Id, pair.junior.Id));
                     usedJuniors.Add(pair.junior.Id);
                     usedTeamLeads.Add(pair.teamLead.Id);
                 }

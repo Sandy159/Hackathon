@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace CommonLibrary.Contracts
 {
-    public record Team(Employee TeamLead, Employee Junior);    
+    public record Team(int TeamLeadId, int JuniorId);    
 }

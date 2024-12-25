@@ -2,5 +2,9 @@ using System.Collections.Generic;
 
 namespace CommonLibrary.Contracts
 {
-    public record TeamLead(int id, string name) : Employee(id, name);
+    public class TeamLead : Employee
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }

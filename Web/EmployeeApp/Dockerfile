@@ -25,8 +25,9 @@ WORKDIR "/src/EmployeeApp"
 RUN dotnet build "EmployeeApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Публикуем проект
+WORKDIR /src
 FROM build AS publish
-RUN dotnet publish "EmployeeApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false -v detailed
+RUN dotnet publish "/src/EmployeeApp/EmployeeApp.csproj" -c Release -o /app/publish --no-build --verbosity detailed
 
 # Финальный образ для работы
 FROM base AS final

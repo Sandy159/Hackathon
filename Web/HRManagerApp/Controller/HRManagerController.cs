@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using HRManager.Service;
-using CommonLibrary.Dto;
+using HRManagerApp.Service;
+using CommonLibrary.Contracts;
 
 namespace HRManagerApp.Controllers
 {
@@ -15,18 +15,30 @@ namespace HRManagerApp.Controllers
             _hrManagerService = hrManagerService;
         }
 
-        [HttpPost("submit-junior-preferences")]
-        public IActionResult SubmitJuniorPreferences([FromBody] PreferencesDto preferences)
+        // Метод для отправки предпочтений для джуниоров и тимлидов
+        [HttpPost("submit-preferences")]
+        public async Task<IActionResult> SubmitPreferencesAsync([FromBody] PreferencesMessage preferencesMessage)
         {
-            _hrManagerService.SaveJuniorPreferences(preferences);
-            return Ok("Junior preferences received.");
-        }
+            if (preferencesMessage == null)
+            {
+                return BadRequest("Preferences are required.");
+            }
 
-        [HttpPost("submit-teamlead-preferences")]
-        public IActionResult SubmitTeamLeadPreferences([FromBody] PreferencesDto preferences)
-        {
-            _hrManagerService.SaveTeamLeadPreferences(preferences);
-            return Ok("Team lead preferences received.");
+            // Логика для определения типа сотрудника, например, на основе role или других полей в preferences
+            if (preferencesMessage.Role == "Junior")
+            {
+                _hrManagerService.SaveJuniorPreferencesAsync(preferencesMessage);
+                return Ok("Junior preferences received.");
+            }
+            else if (preferencesMessage.Role == "TeamLead")
+            {
+                _hrManagerService.SaveTeamLeadPreferencesAsync(preferencesMessage);
+                return Ok("Team lead preferences received.");
+            }
+            else
+            {
+                return BadRequest("Invalid employee role.");
+            }
         }
     }
 }

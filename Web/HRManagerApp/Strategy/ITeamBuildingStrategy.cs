@@ -1,4 +1,6 @@
-﻿namespace CommonLibrary.Contracts
+﻿using CommonLibrary.Contracts;
+
+namespace HRManagerApp.Strategy
 {
     public interface ITeamBuildingStrategy
     {
@@ -9,6 +11,6 @@
         /// <param name="juniors">Джуны</param>
         /// <returns>Список команд</returns>
         IEnumerable<Team> BuildTeams(IEnumerable<Employee> teamLeads, IEnumerable<Employee> juniors,
-            IEnumerable<Wishlist> teamLeadsWishlists, IEnumerable<Wishlist> juniorsWishlists);
+            IEnumerable<PreferencesMessage> teamLeadsWishlists, IEnumerable<PreferencesMessage> juniorsWishlists);
     }
 }

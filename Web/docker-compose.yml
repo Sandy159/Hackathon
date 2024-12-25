@@ -1,63 +1,10 @@
 version: '3.9'
 
 services:
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: hackathon
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d hackathon || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
-  hrmanager:
-    build:
-      context: .
-      dockerfile: HRManagerApp/Dockerfile
-    environment:
-      - ROLE=HRManager
-      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=hackathon;Username=postgres;Password=postgres
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - "5011:8080"
-    networks:
-      - hackathon_net
-
-  hrdirector:
-    build:
-      context: .
-      dockerfile: HRDirectorApp/Dockerfile
-    environment:
-      - ROLE=HRDirector
-      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=hackathon;Username=postgres;Password=postgres
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - "5012:8080"
-    networks:
-      - hackathon_net
-
   x-employee-base: &employee-base
     build:
       context: .
       dockerfile: EmployeeApp/Dockerfile
-    environment:
-      - DB_CONNECTION_STRING=Host=db;Port=5432;Database=hackathon;Username=postgres;Password=postgres
-    depends_on:
-      db:
-        condition: service_healthy
-      hrmanager:
-        condition: service_started
     networks:
       - hackathon_net
 
@@ -140,6 +87,62 @@ services:
       - EMPLOYEE_ID=5
     ports:
       - "5205:8080"
+
+  hrmanager:
+    build:
+      context: .
+      dockerfile: HRManagerApp/Dockerfile
+    environment:
+      - ROLE=HRManager
+      - DB_CONNECTION_STRING=Host=hrmanager-db;Database=manager_db;Username=postgres;Password=postgres
+    depends_on:
+      - hrmanager-db
+    ports:
+      - "5011:8080"
+    networks:
+      - hackathon_net
+
+  hrdirector:
+    build:
+      context: .
+      dockerfile: HRDirectorApp/Dockerfile
+    environment:
+      - ROLE=HRDirector
+      - DB_CONNECTION_STRING=Host=hrdirector-db;Database=director_db;Username=postgres;Password=postgres
+    depends_on:
+      - hrdirector-db
+    ports:
+      - "5012:8080"
+    networks:
+      - hackathon_net
+
+  hrdirector-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: director_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql 
+    networks:
+      - hackathon_net
+
+  hrmanager-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: manager_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql 
+    networks:
+      - hackathon_net
 
 networks:
   hackathon_net:

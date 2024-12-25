@@ -10,10 +10,12 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        var apiBaseUrl = "http://hrmanager-api:8080";
+
         services.AddControllers();
 
         services.AddRefitClient<IHRManagerApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://hr_manager:8080"));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(apiBaseUrl));
 
         services.AddScoped<EmployeeService>();
     }

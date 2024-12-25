@@ -1,6 +1,6 @@
 using CommonLibrary.Contracts;
 using EmployeeApp.RefitClients;
-using CommonLibrary.Utils;
+using EmployeeApp.Utils;
 
 namespace EmployeeApp.Service;
 
@@ -15,23 +15,23 @@ public class EmployeeService
 
     public async Task ProcessWishlistsAsync()
     {
-        // Загружаем сотрудников
+        var employeeIdString = Environment.GetEnvironmentVariable("EMPLOYEE_ID");
+        int.TryParse(employeeIdString, out int employeeId);
+        Console.WriteLine($"Employee ID: {employeeId}");
+
+        var role = Environment.GetEnvironmentVariable("ROLE");
+        Console.WriteLine($"Role: {role}");
+
         var juniors = DataLoader.LoadEmployees("data/juniors.csv");
+        Console.WriteLine($"Loaded {juniors.Count} juniors.");
+
         var teamLeads = DataLoader.LoadEmployees("data/teamleads.csv");
+        Console.WriteLine($"Loaded {teamLeads.Count} team leads.");
 
-        // Генерируем списки предпочтений
-        var wishlists = WishlistGenerator.GenerateWishlist(juniors, teamLeads);
+        var preferenceMessage = WishlistGenerator.GenerateWishlist(juniors, teamLeads, employeeId, role);
+        Console.WriteLine($"Generated preference message for EmployeeId: {employeeId}");
 
-        // Отправляем списки предпочтений через HRManager API
-        foreach (var wishlist in wishlists)
-        {
-            var preferencesMessage = new PreferencesMessage
-            {
-                EmployeeId = wishlist.EmployeeId,
-                Preferences = wishlist.Preferences
-            };
-
-            await _hrManagerApi.SubmitPreferencesAsync(preferencesMessage);
-        }
+        await _hrManagerApi.SubmitPreferencesAsync(preferenceMessage);
+        Console.WriteLine("Preferences submitted to HR Manager API.");
     }
 }
