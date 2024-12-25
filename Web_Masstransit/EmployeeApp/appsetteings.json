@@ -1,0 +1,9 @@
+{
+    "ConnectionStrings": {
+      "DefaultConnection": "Host=db;Port=5432;Database=hackathon;Username=postgres;Password=postgres"
+    },
+    "HRDirectorApi": {
+      "BaseUrl": "http://hrdirector:5012"
+    }
+  }
+  
